@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandbox Execution</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e5e7eb;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .execution-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .terminal {
+            background: #000;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .warning {
+            background: #7f1d1d;
+            color: #fecaca;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        .status {
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .status.running {
+            background: #1f2937;
+            border-left: 4px solid #3b82f6;
+        }
+        .status.error {
+            background: #7f1d1d;
+            border-left: 4px solid #dc2626;
+        }
+        .status.success {
+            background: #064e3b;
+            border-left: 4px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="execution-container">
+        <div class="warning">
+            ⚠️ This is an isolated sandbox environment. Any code execution here cannot affect your system or other windows.
+        </div>
+        <div id="status" class="status"></div>
+        <div id="terminal" class="terminal"></div>
+    </div>
+    <script>
+        // Handle execution results from main process
+        window.sandboxAPI.onExecutionResults((results) => {
+            const terminal = document.getElementById('terminal');
+            const status = document.getElementById('status');
+
+            // Update status
+            status.className = 'status ' + (results.error ? 'error' : results.running ? 'running' : 'success');
+            status.textContent = results.status || 'Ready';
+
+            // Update terminal
+            if (results.output) {
+                terminal.textContent += results.output + '\n';
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>

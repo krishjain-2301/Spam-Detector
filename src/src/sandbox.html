@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sandbox Analysis Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #2a2a2a;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 32px;
+    }
+    .title {
+      font-size: 1.8em;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+      color: #fff;
+      border-bottom: 2px solid #444;
+      padding-bottom: 16px;
+    }
+    .sandbox-analysis {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .sandbox-analysis[data-risk="low"] { border-left-color: #28a745; }
+    .sandbox-analysis[data-risk="medium"] { border-left-color: #ffc107; }
+    .sandbox-analysis[data-risk="high"] { border-left-color: #dc3545; }
+
+    .file-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .file-name {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #fff;
+    }
+    .risk-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9em;
+    }
+    .risk-badge[data-risk="low"] { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+    .risk-badge[data-risk="medium"] { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .risk-badge[data-risk="high"] { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+
+    .info-section {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+    }
+    .info-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .info-label {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .analysis-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+    .analysis-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .analysis-item i {
+      font-size: 1.2em;
+    }
+    .analysis-item.warning i { color: #ffc107; }
+    .analysis-item.danger i { color: #dc3545; }
+    .analysis-item.success i { color: #28a745; }
+
+    .warnings-list, .recommendations-list {
+      list-style: none;
+      padding: 0;
+    }
+    .warning-item {
+      background: rgba(220, 53, 69, 0.1);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border-left: 4px solid #dc3545;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .recommendation-item {
+      background: rgba(40, 167, 69, 0.1);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border-left: 4px solid #28a745;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pattern-section {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .pattern-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .pattern-name {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+    .pattern-count {
+      font-weight: 500;
+      color: #ffc107;
+    }
+
+    .anim {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      margin-bottom: 18px;
+    }
+    .dot {
+      width: 12px; 
+      height: 12px; 
+      border-radius: 50%; 
+      background: #4ecdc4; 
+      margin: 0 6px; 
+      opacity: 0.7; 
+      animation: bounce 1.2s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-16px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .no-results {
+      text-align: center;
+      color: #888;
+      margin-top: 18px;
+      font-size: 1.1em;
+      padding: 40px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+
+    .error-message {
+      background: rgba(220, 53, 69, 0.1);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+      color: #dc3545;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">Sandbox Inspection Results</div>
+    <div class="anim" id="sandbox-anim">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div id="sandbox-results" style="display:none;"></div>
+    <div class="no-results" id="sandbox-no-results" style="display:none;">
+      No results to display. Drop a file to analyze it in the sandbox.
+    </div>
+  </div>
+  <script>
+    function formatRiskLevel(level) {
+      return `<span class="risk-badge" data-risk="${level}">${level.toUpperCase()}</span>`;
+    }
+
+    function formatAnalysisResult(result, fileName) {
+      if (result.error) {
+        return `
+          <div class="error-message">
+            <strong>Error Analyzing ${fileName}:</strong>
+            <p>${result.error}</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="sandbox-analysis" data-risk="${result.riskAssessment.riskLevel}">
+          <div class="file-header">
+            <div class="file-name">${fileName}</div>
+            ${formatRiskLevel(result.riskAssessment.riskLevel)}
+          </div>
+
+          <div class="info-section">
+            <div class="section-title">📄 File Information</div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">File Type</div>
+                <div class="info-value">${result.fileType}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Size</div>
+                <div class="info-value">${result.fileInfo.size} bytes</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Last Modified</div>
+                <div class="info-value">${new Date(result.fileInfo.modified).toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
+
+          ${result.contentAnalysis ? `
+            <div class="info-section">
+              <div class="section-title">🔍 Content Analysis</div>
+              <ul class="analysis-list">
+                <li class="analysis-item ${result.contentAnalysis.containsScripts ? 'warning' : 'success'}">
+                  <i>${result.contentAnalysis.containsScripts ? '⚠️' : '✓'}</i>
+                  Scripts: ${result.contentAnalysis.containsScripts ? 'Found' : 'None'}
+                </li>
+                <li class="analysis-item ${result.contentAnalysis.containsUrls.length > 0 ? 'warning' : 'success'}">
+                  <i>${result.contentAnalysis.containsUrls.length > 0 ? '⚠️' : '✓'}</i>
+                  URLs: ${result.contentAnalysis.containsUrls.length}
+                </li>
+                <li class="analysis-item ${result.contentAnalysis.containsBase64 ? 'warning' : 'success'}">
+                  <i>${result.contentAnalysis.containsBase64 ? '⚠️' : '✓'}</i>
+                  Base64: ${result.contentAnalysis.containsBase64 ? 'Found' : 'None'}
+                </li>
+                <li class="analysis-item ${result.contentAnalysis.containsShellCommands ? 'danger' : 'success'}">
+                  <i>${result.contentAnalysis.containsShellCommands ? '⚠️' : '✓'}</i>
+                  Shell Commands: ${result.contentAnalysis.containsShellCommands ? 'Found' : 'None'}
+                </li>
+              </ul>
+
+              ${Object.entries(result.contentAnalysis.suspiciousPatterns).length > 0 ? `
+                <div class="pattern-section">
+                  <div class="section-title">⚠️ Suspicious Patterns</div>
+                  <div class="pattern-grid">
+                    ${Object.entries(result.contentAnalysis.suspiciousPatterns)
+                      .map(([key, count]) => `
+                        <div class="pattern-item">
+                          <div class="pattern-name">${key}</div>
+                          <div class="pattern-count">${count} occurrence(s)</div>
+                        </div>
+                      `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          ${result.binaryAnalysis ? `
+            <div class="info-section">
+              <div class="section-title">🔐 Binary Analysis</div>
+              <ul class="analysis-list">
+                <li class="analysis-item ${result.binaryAnalysis.isExecutable ? 'danger' : 'success'}">
+                  <i>${result.binaryAnalysis.isExecutable ? '⚠️' : '✓'}</i>
+                  Executable File
+                </li>
+                <li class="analysis-item ${result.binaryAnalysis.isPotentiallyHarmful ? 'danger' : 'success'}">
+                  <i>${result.binaryAnalysis.isPotentiallyHarmful ? '⚠️' : '✓'}</i>
+                  Potentially Harmful
+                </li>
+                <li class="analysis-item ${!result.binaryAnalysis.signatures.isSigned ? 'warning' : 'success'}">
+                  <i>${!result.binaryAnalysis.signatures.isSigned ? '⚠️' : '✓'}</i>
+                  Digital Signature
+                </li>
+              </ul>
+            </div>
+          ` : ''}
+
+          ${result.riskAssessment.warnings.length > 0 || result.riskAssessment.recommendations.length > 0 ? `
+            <div class="info-section">
+              <div class="section-title">⚖️ Risk Assessment</div>
+              ${result.riskAssessment.warnings.length > 0 ? `
+                <div class="section-title">⚠️ Warnings</div>
+                <ul class="warnings-list">
+                  ${result.riskAssessment.warnings.map(warning => 
+                    `<li class="warning-item"><i>⚠️</i>${warning}</li>`
+                  ).join('')}
+                </ul>
+              ` : ''}
+              ${result.riskAssessment.recommendations.length > 0 ? `
+                <div class="section-title">💡 Recommendations</div>
+                <ul class="recommendations-list">
+                  ${result.riskAssessment.recommendations.map(rec => 
+                    `<li class="recommendation-item"><i>💡</i>${rec}</li>`
+                  ).join('')}
+                </ul>
+              ` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    window.electronAPI.onSandboxResults((results) => {
+      document.getElementById('sandbox-anim').style.display = 'none';
+      const resDiv = document.getElementById('sandbox-results');
+      const noResDiv = document.getElementById('sandbox-no-results');
+      
+      if (results && results.length > 0) {
+        resDiv.style.display = 'block';
+        noResDiv.style.display = 'none';
+        resDiv.innerHTML = results.map(r => formatAnalysisResult(r.result, r.name)).join('');
+      } else {
+        resDiv.style.display = 'none';
+        noResDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

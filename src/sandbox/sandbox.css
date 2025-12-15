@@ -1,0 +1,62 @@
+/* CSS for sandbox integration */
+.sandbox-terminal {
+  background: #1a1a1a;
+  color: #e5e7eb;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  padding: 12px;
+  border-radius: 6px;
+  height: 320px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sandbox-error {
+  background: rgba(220, 38, 38, 0.1);
+  border-left: 4px solid #dc2626;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.sandbox-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 4px solid #f59e0b;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.sandbox-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 4px solid #3b82f6;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.sandbox-success {
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 4px solid #10b981;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.sandbox-unavailable .sandbox-feature {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.sandbox-unavailable .sandbox-feature::after {
+  content: "Windows Sandbox not available";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+}

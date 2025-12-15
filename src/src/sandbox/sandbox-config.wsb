@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>%TEMP%\sandbox-share</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\sandbox-share</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -WindowStyle Hidden -File C:\Users\WDAGUtilityAccount\Desktop\sandbox-share\run-analysis.ps1</Command>
+  </LogonCommand>
+  <!-- Maximum security settings -->
+  <VGpu>Disable</VGpu>
+  <Networking>Disable</Networking>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <ProtectedClient>Enable</ProtectedClient>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <MemoryInMB>4096</MemoryInMB>
+  <!-- Additional security restrictions -->
+  <NetworkingAllowed>false</NetworkingAllowed>
+  <HostNetworkingEnabled>false</HostNetworkingEnabled>
+  <AllowedPorts></AllowedPorts>
+</Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>%TEMP%\sandbox-share</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\sandbox-share</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\Users\WDAGUtilityAccount\Desktop\sandbox-share\run-analysis.ps1</Command>
+  </LogonCommand>
+</Configuration>

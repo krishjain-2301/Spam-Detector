@@ -1,0 +1,44 @@
+{
+  "name": "spam-detector-pro",
+  "productName": "Spam Detector Pro",
+  "version": "1.0.0",
+  "description": "Real-time spam detection desktop app with clipboard monitoring and AI-powered analysis",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [
+    "spam",
+    "detection",
+    "security",
+    "ai",
+    "desktop",
+    "electron"
+  ],
+  "author": "jaink",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.9.0",
+    "@electron-forge/maker-deb": "^7.9.0",
+    "@electron-forge/maker-rpm": "^7.9.0",
+    "@electron-forge/maker-squirrel": "^7.9.0",
+    "@electron-forge/maker-zip": "^7.9.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.9.0",
+    "@electron-forge/plugin-fuses": "^7.9.0",
+    "@electron-forge/plugin-vite": "^7.9.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "38.1.2",
+    "vite": "^5.4.20"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "chokidar": "^4.0.3",
+    "electron-squirrel-startup": "^1.0.1",
+    "mime-types": "^2.1.35",
+    "node-notifier": "^10.0.1"
+  }
+}

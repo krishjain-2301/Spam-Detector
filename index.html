@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spam Detector Pro</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' http://localhost:* https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com http://localhost:*;">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./index.css">
+  <style>
+    .btn-green-enabled {
+      border: 2px solid #22c55e !important;
+      box-shadow: 0 0 0 2px #22c55e33;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+    }
+    .switch input { display: none; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #991b1b;
+      transition: .4s;
+      border-radius: 28px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #22c55e;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+  <body class="bg-slate-900 text-slate-100 min-h-screen" style="display:flex; flex-direction:column; min-height:100vh;">
+  <div class="container mx-auto max-w-5xl p-6 overflow: visible; ">
+    <!-- Header -->
+    <div class="header py-12 flex items-center justify-between">
+      <div class="text-center mx-auto">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-sky-400 bg-clip-text text-transparent" style="margin-top: 10px;">🛡️ Spam Detector Pro</h1>
+      </div>
+    </div>
+    <!-- Toggles Section -->
+    <div style="display:flex; justify-content:center; gap:32px; margin-bottom:28px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span>Monitoring</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-monitoring">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span>Background Protection</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-bg-protection">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span>Startup on Login</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-startup">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span>Sandbox Inspection</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-sandbox">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+    <!-- Clipboard Monitor Section -->
+    <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:28px;">
+      <h3 style="font-size:1.2em; margin-bottom:8px;">Clipboard Monitor</h3>
+      <div id="clipboard-content" style="background:#222; color:#aef; padding:10px 18px; border-radius:8px; min-width:320px; max-width:90vw; margin-bottom:8px; word-break:break-all;">Nothing copied yet.</div>
+      <div id="clipboard-scan-result" style="background:#18181b; color:#fff; padding:8px 16px; border-radius:8px; min-width:320px; max-width:90vw;">No scan yet.</div>
+    </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content grid md:grid-cols-2 gap-6">
+      <!-- Input Section -->
+      <div class="card bg-slate-800/60 rounded-xl border border-slate-700 shadow p-6 backdrop-blur">
+        <h2>📝 Live Input Validation</h2>
+        
+        <!-- Status Display -->
+        <div class="status-display flex items-center gap-3 mb-4">
+          <span class="monitoring-status px-4 py-2 rounded bg-slate-800 text-white text-sm">
+            Monitoring Status: <span id="monitoring-status-text" style="color: #991b1b; font-weight: bold;">Inactive</span>
+          </span>
+          <span class="bg-status px-4 py-2 rounded bg-slate-800 text-white text-sm">
+            Protection Status: <span id="bg-status-text" style="color: #991b1b; font-weight: bold;">Inactive</span>
+          </span>
+        </div>
+
+        <!-- Input Fields -->
+        <div class="input-group">
+          <label for="email-input">📧 Email Address</label>
+          <input type="email" id="email-input" placeholder="Enter email to validate..." class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <div class="input-group">
+          <label for="phone-input">📞 Phone Number</label>
+          <input type="tel" id="phone-input" placeholder="Enter phone number to validate..." class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <div class="input-group">
+          <label for="url-input">🔗 URL/Link</label>
+          <input type="url" id="url-input" placeholder="Enter URL to validate..." class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <div class="input-group">
+          <label for="text-input">📄 Text Content</label>
+          <textarea id="text-input" rows="4" placeholder="Enter any text content to analyze..." class="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+        </div>
+
+        <button id="scan-button" class="btn btn-primary mt-3 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">🔍 Scan All Inputs</button>
+      </div>
+
+      <!-- File Scanner Section -->
+      <div class="card bg-slate-800/60 rounded-xl border border-slate-700 shadow p-6 backdrop-blur">
+        <h2>📁 File Scanner</h2>
+        
+        <!-- Drag & Drop Zone -->
+        <div id="file-drop-zone" class="file-drop-zone border-2 border-dashed border-slate-700 rounded-xl p-6 text-center bg-slate-800/40 hover:bg-slate-800/60 transition-colors">
+          <div class="drop-icon">📂</div>
+          <p><strong>Drag & drop</strong> .txt or .eml files here</p>
+          <p>or</p>
+          <button id="file-dialog-btn" class="btn btn-secondary px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition-colors">Browse Files</button>
+        </div>
+
+        <!-- Queued Files + Controls -->
+        <div class="mt-4 flex items-center justify-between">
+          <h3 class="text-slate-300 text-sm">Queued Files</h3>
+          <button id="files-clear" class="btn px-3 py-1.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-sm">Clear Files</button>
+        </div>
+        <ul id="files-list" class="mt-2 text-slate-200 text-sm" style="list-style: none; padding-left: 0;"></ul>
+
+        <div class="results-container" id="results-container">
+          <!-- Results will be displayed here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Sandbox File Scanner Section -->
+    <div class="card bg-slate-800/60 rounded-xl border border-slate-700 shadow p-6 backdrop-blur mt-6">
+      <h2>🧪 Sandbox File Scanner</h2>
+      <p class="text-slate-400 mb-4">Upload files here to analyze them in a secure sandbox environment before opening.</p>
+      
+      <!-- Sandbox Drag & Drop Zone -->
+      <div id="sandbox-file-drop-zone" class="file-drop-zone border-2 border-dashed border-yellow-700 rounded-xl p-6 text-center bg-slate-800/40 hover:bg-slate-800/60 transition-colors">
+        <div class="drop-icon">🧪</div>
+        <p><strong>Drag & drop</strong> files here for sandbox analysis</p>
+        <p>or</p>
+        <button id="sandbox-dialog-btn" class="btn btn-secondary px-4 py-2 rounded-lg bg-yellow-700 hover:bg-yellow-600 text-white transition-colors">Select Files for Sandbox</button>
+      </div>
+
+      <!-- Sandbox Queued Files + Controls -->
+        <div class="mt-4 flex items-center justify-between">
+        <h3 class="text-slate-300 text-sm">Sandbox Queue</h3>
+        <div class="flex gap-2 items-center">
+          <button id="sandbox-analyze-all" class="btn px-3 py-1.5 rounded bg-yellow-700 hover:bg-yellow-600 text-white text-sm">Run Analysis</button>
+          <button id="sandbox-files-clear" class="btn px-3 py-1.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-sm">Clear Queue</button>
+          <button id="sandbox-trust-info" title="How the trust score is calculated" class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white text-sm">?</button>
+        </div>
+      </div>
+      <ul id="sandbox-files-list" class="mt-2 text-slate-200 text-sm space-y-2" style="list-style: none; padding-left: 0;"></ul>
+
+      <!-- Sandbox Results Container -->
+      <div class="sandbox-results-container mt-4" id="sandbox-results-container">
+        <!-- Sandbox results will be displayed here -->
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="card bg-slate-800/60 rounded-xl border border-slate-700 shadow p-6 backdrop-blur mt-6">
+      <h2>✨ Features</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🔄 Clipboard Monitoring</h3>
+          <p style="color: #4a5568;">Automatically detects suspicious content when you copy emails, links, or phone numbers to clipboard.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🤖 AI-Powered Detection</h3>
+          <p style="color: #4a5568;">Uses Google Gemini AI to analyze content for spam patterns, phishing attempts, and malicious links.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">📁 File Scanning</h3>
+          <p style="color: #4a5568;">Scan .txt and .eml files by dragging and dropping them into the app for instant analysis.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">⚡ Real-time Validation</h3>
+          <p style="color: #4a5568;">Get instant feedback as you type phone numbers, emails, and URLs with color-coded validation.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🔔 Smart Notifications</h3>
+          <p style="color: #4a5568;">Receive instant popup warnings when suspicious content is detected in your clipboard.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🎯 System Tray</h3>
+          <p style="color: #4a5568;">Runs quietly in the background with system tray integration for continuous protection.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🧪 Sandbox File Execution</h3>
+          <p style="color: #4a5568;">Run suspicious files in a restricted environment to observe their behavior safely before opening them on your system.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🛠️ Advanced Tools Dropdown</h3>
+          <p style="color: #4a5568;">Access all advanced security features from a single dropdown menu (hammer icon) for quick actions and automation.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🚀 Monitoring Toggle</h3>
+          <p style="color: #4a5568;">Easily start or stop real-time clipboard and content monitoring with a single click.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🛡️ Background Protection</h3>
+          <p style="color: #4a5568;">Enable background protection to automatically scan new files in your Downloads folder for threats.</p>
+        </div>
+        <div style="padding: 15px; background: #f7fafc; border-radius: 8px;">
+          <h3 style="color: #667eea; margin-bottom: 10px;">🔄 Startup on Login</h3>
+          <p style="color: #4a5568;">Automatically launch Spam Detector Pro when you log in to your computer for continuous protection.</p>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+
+    <script type="module" src="/src/renderer.js"></script>
+    <script type="module" src="/src/toggles.js"></script>
+    <script type="module" src="/src/clipboardListener.js"></script>
+    <script>
+      // Add green border when enabled for toggle buttons
+      function setButtonGreen(id, enabled) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (enabled) {
+          btn.classList.add('btn-green-enabled');
+        } else {
+          btn.classList.remove('btn-green-enabled');
+        }
+      }
+      // Initial state fetch and event listeners
+      window.addEventListener('DOMContentLoaded', async () => {
+        // Toggle Monitoring
+        if (window.electronAPI && window.electronAPI.getMonitoringStatus) {
+          const enabled = await window.electronAPI.getMonitoringStatus();
+          setButtonGreen('hammer-monitoring-toggle', enabled);
+        }
+        // Toggle Background Protection
+        if (window.electronAPI && window.electronAPI.getBackgroundProtection) {
+          const enabled = await window.electronAPI.getBackgroundProtection();
+          setButtonGreen('hammer-bg-toggle', enabled);
+        }
+        // Toggle Startup on Login
+        if (window.electronAPI && window.electronAPI.getAutoLaunch) {
+          const enabled = await window.electronAPI.getAutoLaunch();
+          setButtonGreen('hammer-startup-toggle', enabled);
+        }
+        // Add click listeners to update border
+        const monitoringBtn = document.getElementById('hammer-monitoring-toggle');
+        if (monitoringBtn) {
+          monitoringBtn.addEventListener('click', async () => {
+            await window.electronAPI.toggleMonitoring();
+            const enabled = await window.electronAPI.getMonitoringStatus();
+            setButtonGreen('hammer-monitoring-toggle', enabled);
+          });
+        }
+        const bgBtn = document.getElementById('hammer-bg-toggle');
+        if (bgBtn) {
+          bgBtn.addEventListener('click', async () => {
+            await window.electronAPI.toggleBackgroundProtection();
+            const enabled = await window.electronAPI.getBackgroundProtection();
+            setButtonGreen('hammer-bg-toggle', enabled);
+          });
+        }
+        const startupBtn = document.getElementById('hammer-startup-toggle');
+        if (startupBtn) {
+          startupBtn.addEventListener('click', async () => {
+            await window.electronAPI.setAutoLaunch(!(await window.electronAPI.getAutoLaunch()));
+            const enabled = await window.electronAPI.getAutoLaunch();
+            setButtonGreen('hammer-startup-toggle', enabled);
+          });
+        }
+      });
+    </script>
+    <script>
+      // Monitoring toggle logic
+      async function updateMonitoringBtn() {
+        if (!window.electronAPI || !window.electronAPI.getMonitoringStatus) return;
+        const btn = document.getElementById('monitoring-toggle-btn');
+        if (!btn) return;
+        const enabled = await window.electronAPI.getMonitoringStatus();
+        if (enabled) {
+          btn.textContent = 'Monitoring: On';
+          btn.style.background = '#22c55e';
+          btn.style.borderColor = '#22c55e';
+        } else {
+          btn.textContent = 'Monitoring: Off';
+          btn.style.background = '#991b1b';
+          btn.style.borderColor = '#991b1b';
+        }
+      }
+      window.addEventListener('DOMContentLoaded', () => {
+        updateMonitoringBtn();
+        const btn = document.getElementById('monitoring-toggle-btn');
+        if (btn) {
+          btn.addEventListener('click', async () => {
+            await window.electronAPI.toggleMonitoring();
+            updateMonitoringBtn();
+          });
+        }
+      });
+    </script>
+    <script type="module">
+      import { startMonitoring, stopMonitoring, updateClipboardDisplay } from './src/clipboardMonitor.js';
+      
+      // Initialize clipboard monitoring
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const isMonitoring = await window.electronAPI.getMonitoringStatus();
+          if (isMonitoring) {
+            startMonitoring();
+          }
+        } catch (error) {
+          console.error('Failed to initialize clipboard monitoring:', error);
+        }
+      });
+
+      // Listen for monitoring toggle changes
+      const monitoringToggle = document.getElementById('toggle-monitoring');
+      if (monitoringToggle) {
+        monitoringToggle.addEventListener('change', (event) => {
+          if (event.target.checked) {
+            startMonitoring();
+          } else {
+            stopMonitoring();
+          }
+        });
+      }
+
+      // Listen for clipboard events
+      document.addEventListener('copy', () => setTimeout(updateClipboardDisplay, 50));
+      document.addEventListener('paste', () => setTimeout(updateClipboardDisplay, 50));
+    </script>
+  </body>
+</html>
